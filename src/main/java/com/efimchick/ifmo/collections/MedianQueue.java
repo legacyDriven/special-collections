@@ -24,12 +24,13 @@ class MedianQueue implements Queue<Integer> {
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        return lowerHalf.contains(o) || upperHalf.contains(o);
     }
 
     @Override
     public Iterator<Integer> iterator() {
-        return null;
+        if(lowerHalf.size() >= upperHalf.size()) return lowerHalf.iterator();
+        else return upperHalf.iterator();
     }
 
     @Override
@@ -74,12 +75,24 @@ class MedianQueue implements Queue<Integer> {
 
     @Override
     public void clear() {
-
+        lowerHalf.clear();
+        upperHalf.clear();
     }
 
     @Override
     public boolean offer(Integer integer) {
-        return false;
+        if (upperHalf.size() > 0 && integer > upperHalf.peek()) {
+            upperHalf.add(integer);
+        } else {
+            lowerHalf.add(integer);
+        }
+
+        if (lowerHalf.size() - upperHalf.size() == 2) {
+            upperHalf.add(lowerHalf.remove());
+        } else if (upperHalf.size() - lowerHalf.size() == 2) {
+            lowerHalf.add(upperHalf.remove());
+        }
+        return true;
     }
 
     @Override
@@ -89,7 +102,10 @@ class MedianQueue implements Queue<Integer> {
 
     @Override
     public Integer poll() {
-        return null;
+        if (lowerHalf.size() >= upperHalf.size())
+            return lowerHalf.remove();
+        else
+            return upperHalf.remove();
     }
 
     @Override
@@ -99,6 +115,9 @@ class MedianQueue implements Queue<Integer> {
 
     @Override
     public Integer peek() {
-        return null;
-    }
+        if (lowerHalf.size() >= upperHalf.size()) {
+            return lowerHalf.peek();
+        } else {
+            return upperHalf.peek();
+        }}
 }
